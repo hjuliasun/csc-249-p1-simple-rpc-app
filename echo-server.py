@@ -18,7 +18,7 @@ def subtract(args):
         sub_value -= value
     return sub_value
 
-
+#determines which computation to perform based on client input
 def respond(args):
     try:
         client_input = args.decode('utf-8')
@@ -26,16 +26,16 @@ def respond(args):
         operand_array = np.array(operand, dtype = int)
         operand_list = list(operand_array)
 
-        if operator.lower() == "add":
+        if operator.lower() == "add": #performs addition 
             computation = add(operand_list)
             # computation = sum(operand_list)
             output = f"Received client message: +{':'.join(map(str,operand_list))} [{len(args)} bytes]. Requested operation is addition. Request includes {len(operand_list)} arguments: {' '.join(map(str,operand_list))}. Result of operation: {computation}. Sending resulting message '{'+'.join(map(str,operand_list))} = {computation}' back to client"
-        if (operator.lower() == "minus" or operator.lower() == "subtract"):
+        if (operator.lower() == "minus" or operator.lower() == "subtract"): #performs subtraction
             computation = subtract(operand_list)
             # computation = operand_list[0] - sum(operand_list[1:])
             output = f"Received client message: -{':'.join(map(str,operand_list))} [{len(args)} bytes]. Requested operation is subtraction. Request includes {len(operand_list)} arguments: {' '.join(map(str,operand_list))}. Result of operation: {computation}. Sending resulting message '{operand_list[0]}-{'-'.join(map(str, operand_list[1:]))} = {computation}' back to client"
         return output
-    except Exception as e:
+    except Exception as e: #throws error message if user inputs arthimetic function that's not addition or subtraction
         return f"Error Message: Unknown operand or {e}"
 
 
@@ -68,9 +68,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             # print(f"Received client message: '{data!r}' [{len(data)} bytes]")
 
 
-            server_response = respond(data)
-            print(server_response.encode('utf-8'))
+            server_response = respond(data) #process data sent from client
+            print(server_response.encode('utf-8')) 
             # print(f"echoing '{data!r}' back to client") #"I'm not home!".encode('utf-8') turns into byte like object
-            conn.sendall(server_response.encode('utf-8'))
+            conn.sendall(server_response.encode('utf-8')) #sends processed data back to client
 
 print("server is done!")
