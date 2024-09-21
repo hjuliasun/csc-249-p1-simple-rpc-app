@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # pylint: disable=broad-exception-caught
-#!/usr/bin/env python3
+# !/usr/bin/env python3
 
 import socket
 import numpy as np
@@ -22,18 +22,18 @@ def subtract(args):
 def respond(args):
     try:
         client_input = args.decode('utf-8')
-        operator, *operand = client_input.split(':')
+        operator, *operand = client_input.split(' ')
         operand_array = np.array(operand, dtype = int)
         operand_list = list(operand_array)
 
         if operator.lower() == "add":
             computation = add(operand_list)
             # computation = sum(operand_list)
-            output = f"Received client message: +{':'.join(map(str,operand_list))} [{len(args)}] \n Requested operation is addition. \n Request includes {len(operand_list)} arguments: {' '.join(map(str,operand_list))} \n Result of operation: {computation} \n Sending resulting message '{'+'.join(map(str,operand_list))} = {computation}' back to client"
+            output = f"Received client message: +{':'.join(map(str,operand_list))} [{len(args)} bytes]. Requested operation is addition. Request includes {len(operand_list)} arguments: {' '.join(map(str,operand_list))}. Result of operation: {computation}. Sending resulting message '{'+'.join(map(str,operand_list))} = {computation}' back to client"
         if (operator.lower() == "minus" or operator.lower() == "subtract"):
             computation = subtract(operand_list)
             # computation = operand_list[0] - sum(operand_list[1:])
-            output = f"Received client message: -{':'.join(map(str,operand_list))} [{len(args)}] \n Requested operation is subtraction. \n Request includes {len(operand_list)} arguments: {' '.join(map(str,operand_list))} \n Result of operation: {computation} \n Sending resulting message '{operand_list[0]}-{'-'.join(map(str, operand_list[1:]))} = {computation}' back to client"
+            output = f"Received client message: -{':'.join(map(str,operand_list))} [{len(args)} bytes]. Requested operation is subtraction. Request includes {len(operand_list)} arguments: {' '.join(map(str,operand_list))}. Result of operation: {computation}. Sending resulting message '{operand_list[0]}-{'-'.join(map(str, operand_list[1:]))} = {computation}' back to client"
         return output
     except Exception as e:
         return f"Error Message: Unknown operand or {e}"
@@ -69,8 +69,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
 
             server_response = respond(data)
-            
+            print(server_response.encode('utf-8'))
             # print(f"echoing '{data!r}' back to client") #"I'm not home!".encode('utf-8') turns into byte like object
-            conn.sendall(server_response)
+            conn.sendall(server_response.encode('utf-8'))
 
 print("server is done!")
